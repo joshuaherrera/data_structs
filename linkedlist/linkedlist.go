@@ -11,14 +11,7 @@ type LinkedList struct {
 	Head *Node
 }
 
-//need to be able to addnode, delete node, add at beginning, delete at beginnign
-//delete some node, add after some node
-//all linkedlist functions should be called from head node
-/*func (head *Node) CreateNode() {
-	head.Data = 0
-	head.Next = nil
-}*/
-
+//need to work on removal when list is empty
 //add the value to the end of a linked list
 func (list *LinkedList) Add(v int) {
 	//create a temp node for the new value and a placeholder node
