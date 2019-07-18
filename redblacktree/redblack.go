@@ -169,7 +169,7 @@ func (tree *RedBlackTree) Search(val int) (*Node, bool) {
 
 }
 
-func (tree *RedBlackTree) Insert(val int) *Node {
+func (tree *RedBlackTree) Insert(val int) {
 	fmt.Println("\nTesting Insertion")
 	n := &Node{Data: val}
 	//insert node into tree
@@ -191,7 +191,7 @@ func (tree *RedBlackTree) Insert(val int) *Node {
 	for root.GetParent() != nil {
 		root = root.GetParent()
 	}
-	return root
+	tree.Root = root
 
 }
 
@@ -200,7 +200,7 @@ func (root *Node) InsertRecurse(n *Node) {
 	//recursively descend tree to find leaf node.
 	if root != nil && n.Data < root.Data {
 		if root.Left != nil {
-			fmt.Println("\nGoing down left branch")
+			//fmt.Println("\nGoing down left branch")
 			root.Left.InsertRecurse(n)
 			return
 		} else {
@@ -209,7 +209,7 @@ func (root *Node) InsertRecurse(n *Node) {
 		}
 	} else if root != nil {
 		if root.Right != nil {
-			fmt.Println("\nGoing down right branch")
+			//fmt.Println("\nGoing down right branch")
 			root.Right.InsertRecurse(n)
 			return
 		} else {
@@ -299,4 +299,168 @@ func (n *Node) InsertCase4b() {
 	}
 	p.Color = BLACK
 	g.Color = RED
+}
+
+func (n *Node) FindMin() *Node {
+	fmt.Println("Testing FindMin")
+	/*return min node. used for getting left-most child
+	  of right subtree
+	*/
+	currNode := n
+	for currNode.Left != nil {
+		currNode = currNode.Left
+	}
+	return currNode
+}
+
+func (n *Node) ReplaceNode(child *Node) {
+	fmt.Println("Testing ReplaceNode")
+	if n.Parent != nil {
+		if n == n.Parent.Left {
+			n.Parent.Left = child
+		} else {
+			n.Parent.Right = child
+		}
+	}
+	if child != nil {
+		child.Parent = n.Parent
+	}
+}
+
+func (n *Node) DeleteOneChild() *Node {
+	fmt.Println("Testing DeleteOneChild")
+	//fill later
+	var child *Node
+	if n.Right == nil {
+		child = n.Left
+	} else {
+		child = n.Right
+	}
+	n.ReplaceNode(child)
+	fmt.Println("Exitted ReplaceNode")
+	if n.Color == BLACK {
+		if child.Color == RED {
+			child.Color = BLACK
+		} else {
+			child.DeleteCase1()
+		}
+	}
+	//search for root and return
+	root := child
+	for root.GetParent() != nil {
+		root = root.GetParent()
+	}
+	//'delete' n and return the new root
+	n = nil
+	return root
+
+}
+
+func (tree *RedBlackTree) Delete(val int) {
+	fmt.Println("\nTesting deletion")
+	if tree.Root == nil {
+		return
+	}
+
+	//find the node to delete
+	currNode, boolean := tree.Search(val)
+	fmt.Println("Value found? ", boolean)
+	//check if has 2 children, and address if so
+	if currNode.Left != nil && currNode.Right != nil {
+		successor := currNode.Right.FindMin()
+		currNode.Data = successor.Data
+		//change currNode to continue with next cases
+		currNode = successor
+	}
+	//deal with case where 0 or 1 children, returns new root
+	// could we just do tree.Root = currNode.DeleteOneChild?
+	tree.Root = currNode.DeleteOneChild()
+	//figure out if need to modify to work with my code
+	//may need to bubble up from tree.Root to find root.
+
+}
+
+func (n *Node) DeleteCase1() {
+	fmt.Println("Testing DeleteCase1")
+	//terminal case
+	if n.Parent != nil {
+		n.DeleteCase2()
+	}
+}
+
+func (n *Node) DeleteCase2() {
+	fmt.Println("Testing DeleteCase2")
+	s := n.GetSibling()
+	if s.Color == RED {
+		n.Parent.Color = RED
+		s.Color = BLACK
+		if n == n.Parent.Left {
+			n.Parent.RotateLeft()
+		} else {
+			n.Parent.RotateLeft()
+		}
+	}
+	n.DeleteCase3()
+}
+
+func (n *Node) DeleteCase3() {
+	fmt.Println("Testing DeleteCase3")
+	s := n.GetSibling()
+	if n.Parent.Color == BLACK && s.Color == BLACK &&
+		s.Left.Color == BLACK && s.Right.Color == BLACK {
+		s.Color = RED
+		n.Parent.DeleteCase1()
+	} else {
+		n.DeleteCase4()
+	}
+}
+
+func (n *Node) DeleteCase4() {
+	fmt.Println("Testing DeleteCase4")
+	//terminal case
+	s := n.GetSibling()
+
+	if n.Parent.Color == RED && s.Color == BLACK &&
+		s.Left.Color == BLACK && s.Right.Color == BLACK {
+		s.Color = RED
+		n.Parent.Color = BLACK
+	} else {
+		n.DeleteCase5()
+	}
+}
+
+func (n *Node) DeleteCase5() {
+	fmt.Println("Testing DeleteCase5")
+	s := n.GetSibling()
+	if s.Color == BLACK {
+		if n == n.Parent.Left && s.Right.Color == BLACK &&
+			s.Left.Color == RED {
+			s.Color = RED
+			s.Left.Color = BLACK
+			s.RotateRight()
+		} else if n == n.Parent.Right && s.Left.Color == BLACK &&
+			s.Right.Color == RED {
+			s.Color = RED
+			s.Right.Color = BLACK
+			s.RotateLeft()
+		}
+		n.DeleteCase6()
+	}
+}
+
+func (n *Node) DeleteCase6() {
+	fmt.Println("Testing DeleteCase6")
+	//terminal case
+	s := n.GetSibling()
+	s.Color = n.Parent.Color
+	n.Parent.Color = BLACK
+
+	if n == n.Parent.Left {
+		s.Right.Color = BLACK
+		n.Parent.RotateLeft()
+	} else {
+		s.Left.Color = BLACK
+		n.Parent.RotateRight()
+	}
+
 }
