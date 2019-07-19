@@ -4,24 +4,24 @@ import (
 	"fmt"
 )
 
-type Color_t int
+type color_t int
 
 const (
-	BLACK Color_t = iota //iota starts at 0 for enum
+	BLACK color_t = iota //iota starts at 0 for enum
 	RED
 )
 
 type Node struct {
-	/*Since the Data in this implementation are integers,
+	/*Since the data in this implementation are integers,
 	  we can use them as the keys. Otherwise, we'd have a
 	  new int variable, key, that keeps sorted order, along
 	  with the value to store.
 	*/
-	Color  Color_t
-	Data   int
-	Left   *Node
-	Right  *Node
-	Parent *Node
+	color  color_t
+	data   int
+	left   *Node
+	right  *Node
+	parent *Node
 }
 
 type RedBlackTree struct {
@@ -35,134 +35,137 @@ type RedBlackTree struct {
 		5. Every path from a given node to any of its descendant NIL nodes
 		   contains the same number of black nodes.
 	*/
-	Root *Node
+	root *Node
+	size int
 }
 
-func (n *Node) GetParent() *Node {
-	return n.Parent
+func (tree *RedBlackTree) GetParent(n *Node) *Node {
+	return n.parent
 }
 
-func (n *Node) GetGrandParent() *Node {
-	p := n.GetParent()
+func (tree *RedBlackTree) GetGrandParent(n *Node) *Node {
+	p := tree.GetParent(n)
 	if p == nil {
 		return nil
 	}
-	return p.GetParent()
+	return tree.GetParent(p)
 }
 
-func (n *Node) GetSibling() *Node {
-	p := n.GetParent()
+func (tree *RedBlackTree) GetSibling(n *Node) *Node {
+	p := tree.GetParent(n)
 	if p == nil {
 		//at root
 		return nil
 	}
-	if n == p.Left {
-		return p.Right
+	if n == p.left {
+		return p.right
 	} else {
-		return p.Left
+		return p.left
 	}
 }
 
-func (n *Node) GetUncle() *Node {
-	p := n.GetParent()
-	g := n.GetGrandParent()
+func (tree *RedBlackTree) GetUncle(n *Node) *Node {
+	p := tree.GetParent(n)
+	g := tree.GetGrandParent(n)
 	if g == nil {
 		return nil
 	} else {
-		return p.GetSibling()
+		return tree.GetSibling(p)
 	}
 }
 
-func (n *Node) RotateLeft() {
-	newNode := n.Right
-	p := n.GetParent()
+func (tree *RedBlackTree) RotateLeft(n *Node) {
+	fmt.Println("Rotating Left")
+	newNode := n.right
+	p := tree.GetParent(n)
 	if newNode == nil {
 		panic("leaves cannot be internal nodes due to emptiness")
 	}
-	n.Right = newNode.Left
-	newNode.Left = n
-	n.Parent = newNode
-	if n.Right != nil {
-		n.Right.Parent = n
+	n.right = newNode.left
+	newNode.left = n
+	n.parent = newNode
+	if n.right != nil {
+		n.right.parent = n
 	}
 	//check if n is root
 	if p != nil {
-		if n == p.Left {
-			p.Left = newNode
-		} else if n == p.Right {
-			p.Right = newNode
+		if n == p.left {
+			p.left = newNode
+		} else if n == p.right {
+			p.right = newNode
 		}
 	}
-	newNode.Parent = p
+	newNode.parent = p
 }
 
-func (n *Node) RotateRight() {
-	newNode := n.Left
-	p := n.GetParent()
+func (tree *RedBlackTree) RotateRight(n *Node) {
+	fmt.Println("Rotating Right")
+	newNode := n.left
+	p := tree.GetParent(n)
 	if newNode == nil {
 		panic("leaves cannot be internal nodes due to emptiness")
 	}
-	n.Left = newNode.Right
-	newNode.Right = n
-	n.Parent = newNode
+	n.left = newNode.right
+	newNode.right = n
+	n.parent = newNode
 
-	if n.Left != nil {
-		n.Left.Parent = n
+	if n.left != nil {
+		n.left.parent = n
 	}
 
 	if p != nil {
-		if n == p.Left {
-			p.Left = newNode
-		} else if n == p.Right {
-			p.Right = newNode
+		if n == p.left {
+			p.left = newNode
+		} else if n == p.right {
+			p.right = newNode
 		}
 	}
-	newNode.Parent = p
+	newNode.parent = p
 }
 
-func (n *Node) InOrder() {
+func (tree *RedBlackTree) InOrder(n *Node) {
 	//fmt.Println("Calling InOrder traversal")
 	if n == nil {
 		return
 	}
-	n.Left.InOrder()
-	fmt.Printf("Value: %v, Color: %v ", n.Data, n.Color)
-	n.Right.InOrder()
+	tree.InOrder(n.left)
+	fmt.Printf("Value: %v, color: %v ", n.data, n.color)
+	tree.InOrder(n.right)
 }
 
-func (n *Node) PreOrder() {
+func (tree *RedBlackTree) PreOrder(n *Node) {
 	if n == nil {
 		return
 	}
-	fmt.Printf("Value: %v , Color: %v ", n.Data, n.Color)
-	n.Left.PreOrder()
-	n.Right.PreOrder()
+	fmt.Printf("Value: %v , color: %v ", n.data, n.color)
+	tree.PreOrder(n.left)
+	tree.PreOrder(n.right)
 }
 
-func (n *Node) PostOrder() {
+func (tree *RedBlackTree) PostOrder(n *Node) {
 	if n == nil {
 		return
 	}
-	n.Left.PostOrder()
-	n.Right.PostOrder()
-	fmt.Printf("Value: %v , Color: %v ", n.Data, n.Color)
+	tree.PostOrder(n.left)
+	tree.PostOrder(n.right)
+	fmt.Printf("Value: %v , color: %v ", n.data, n.color)
 
 }
 
 func (tree *RedBlackTree) Search(val int) (*Node, bool) {
 	fmt.Println("\nInitiating search")
-	if tree.Root == nil {
+	if tree.root == nil {
 		return nil, false
 	}
-	currNode := tree.Root
+	currNode := tree.root
 
 	for currNode != nil {
-		if val == currNode.Data {
+		if val == currNode.data {
 			return currNode, true
-		} else if val < currNode.Data {
-			currNode = currNode.Left
-		} else if val > currNode.Data {
-			currNode = currNode.Right
+		} else if val < currNode.data {
+			currNode = currNode.left
+		} else if val > currNode.data {
+			currNode = currNode.right
 		}
 	}
 	return nil, false
@@ -171,194 +174,171 @@ func (tree *RedBlackTree) Search(val int) (*Node, bool) {
 
 func (tree *RedBlackTree) Insert(val int) {
 	fmt.Println("\nTesting Insertion")
-	n := &Node{Data: val}
+	n := &Node{data: val}
 	//insert node into tree
-	root := tree.Root
+	root := tree.root
 	if root == nil {
-		n.Parent = nil
-		n.Left = nil
-		n.Right = nil
-		n.Color = RED
-		tree.Root = n
+		n.parent = nil
+		n.left = nil
+		n.right = nil
+		n.color = RED
+		tree.root = n
 	} else {
-		root.InsertRecurse(n)
+		tree.InsertRecurse(root, n)
 	}
 	//repair any Red-Black violations
-	n.InsertRepair()
+	tree.InsertRepair(n)
 	//return root to work with cases 4a/4b
 
 	root = n
-	for root.GetParent() != nil {
-		root = root.GetParent()
+	for tree.GetParent(root) != nil {
+		root = tree.GetParent(root)
 	}
-	tree.Root = root
+	tree.root = root
+	tree.size++
 
 }
 
-func (root *Node) InsertRecurse(n *Node) {
+func (tree *RedBlackTree) InsertRecurse(root, n *Node) {
 	fmt.Println("Calling InsertRecurse")
 	//recursively descend tree to find leaf node.
-	if root != nil && n.Data < root.Data {
-		if root.Left != nil {
+	if root != nil && n.data < root.data {
+		if root.left != nil {
 			//fmt.Println("\nGoing down left branch")
-			root.Left.InsertRecurse(n)
+			tree.InsertRecurse(root.left, n)
 			return
 		} else {
 			fmt.Println("Adding to left branch")
-			root.Left = n
+			root.left = n
 		}
 	} else if root != nil {
-		if root.Right != nil {
+		if root.right != nil {
 			//fmt.Println("\nGoing down right branch")
-			root.Right.InsertRecurse(n)
+			tree.InsertRecurse(root.right, n)
 			return
 		} else {
 			fmt.Println("Adding to right branch")
-			root.Right = n
+			root.right = n
 		}
 	}
 	//set node values
-	n.Parent = root
-	n.Left = nil
-	n.Right = nil
-	n.Color = RED
+	n.parent = root
+	n.left = nil
+	n.right = nil
+	n.color = RED
 
 }
 
-func (n *Node) InsertRepair() {
+func (tree *RedBlackTree) InsertRepair(n *Node) {
 	fmt.Println("Calling InsertRepair")
 	//violate any RB violations starting from newly added node
-	if n.GetParent() == nil {
-		n.InsertCase1()
-	} else if n.GetParent().Color == BLACK {
-		n.InsertCase2()
-	} else if n.GetUncle() != nil && n.GetUncle().Color == RED {
-		n.InsertCase3()
+	if tree.GetParent(n) == nil {
+		tree.InsertCase1(n)
+	} else if tree.GetParent(n).color == BLACK {
+		tree.InsertCase2(n)
+	} else if tree.GetUncle(n) != nil && tree.GetUncle(n).color == RED {
+		tree.InsertCase3(n)
 	} else {
-		n.InsertCase4a()
+		tree.InsertCase4a(n)
 	}
 }
 
-func (n *Node) InsertCase1() {
+func (tree *RedBlackTree) InsertCase1(n *Node) {
 	fmt.Println("Calling InsertCase1")
 	//case 1: n is root and is currently RED
-	if n.GetParent() == nil {
-		n.Color = BLACK
+	if tree.GetParent(n) == nil {
+		n.color = BLACK
 	}
 }
 
-func (n *Node) InsertCase2() {
+func (tree *RedBlackTree) InsertCase2(n *Node) {
 	fmt.Println("Calling InsertCase2")
 	//tree is valid do nothing
 	return
 }
 
-func (n *Node) InsertCase3() {
+func (tree *RedBlackTree) InsertCase3(n *Node) {
 	fmt.Println("Calling InsertCase3")
 	//case 3: parent and uncle are red
 	//make them black and repaint grandparent red.
 	//may need to repair grandparent if it's a root,
 	//or for property 4 where children of red node must be black
-	n.GetParent().Color = BLACK
-	n.GetUncle().Color = BLACK
-	n.GetGrandParent().Color = RED
-	n.GetGrandParent().InsertRepair()
+	tree.GetParent(n).color = BLACK
+	tree.GetUncle(n).color = BLACK
+	tree.GetGrandParent(n).color = RED
+	tree.InsertRepair(tree.GetGrandParent(n))
 }
 
-func (n *Node) InsertCase4a() {
+func (tree *RedBlackTree) InsertCase4a(n *Node) {
 	fmt.Println("Calling InsertCase4a")
 	//case 4a: parent is red, but uncle is black.
 	//must put node n into grandparent position. wont
 	//work if n is on inside of the tree. must do a rotation
 	//then move to case 4b
-	p := n.GetParent()
-	g := n.GetGrandParent()
+	p := tree.GetParent(n)
+	g := tree.GetGrandParent(n)
 
-	if n == p.Right && p == g.Left {
-		p.RotateLeft()
-		n = n.Left
-	} else if n == p.Left && p == g.Right {
-		p.RotateRight()
-		n = n.Right
+	if n == p.right && p == g.left {
+		tree.RotateLeft(p)
+		n = n.left
+	} else if n == p.left && p == g.right {
+		tree.RotateRight(p)
+		n = n.right
 	}
-	n.InsertCase4b()
+	tree.InsertCase4b(n)
 }
 
-func (n *Node) InsertCase4b() {
+func (tree *RedBlackTree) InsertCase4b(n *Node) {
 	fmt.Println("Calling InsertCase4b")
 	//case 4b: n is now on outside of tree. perform rt rotation
 	//on grandparent. p is not parent of n and former g. g is black.
 	//swap colors with p and g
-	p := n.GetParent()
-	g := n.GetGrandParent()
+	p := tree.GetParent(n)
+	g := tree.GetGrandParent(n)
 
-	if n == p.Left {
-		g.RotateRight()
+	if n == p.left {
+		tree.RotateRight(g)
 	} else {
-		g.RotateLeft()
+		tree.RotateLeft(g)
 	}
-	p.Color = BLACK
-	g.Color = RED
+	p.color = BLACK
+	g.color = RED
 }
 
-func (n *Node) FindMin() *Node {
+func (tree *RedBlackTree) Clear() {
+	tree.root = nil
+	tree.size = 0
+}
+
+func (tree *RedBlackTree) FindMin(n *Node) *Node {
 	fmt.Println("Testing FindMin")
 	/*return min node. used for getting left-most child
 	  of right subtree
 	*/
 	currNode := n
-	for currNode.Left != nil {
-		currNode = currNode.Left
+	for currNode.left != nil {
+		currNode = currNode.left
 	}
 	return currNode
 }
 
-func (n *Node) ReplaceNode(child *Node) {
+func (tree *RedBlackTree) ReplaceNode(n, child *Node) {
 	fmt.Println("Testing ReplaceNode")
-	if n.Parent != nil {
-		if n == n.Parent.Left {
-			n.Parent.Left = child
+	if n.parent != nil {
+		if n == n.parent.left {
+			n.parent.left = child
 		} else {
-			n.Parent.Right = child
+			n.parent.right = child
 		}
 	}
 	if child != nil {
-		child.Parent = n.Parent
+		child.parent = n.parent
 	}
-}
-
-func (n *Node) DeleteOneChild() *Node {
-	fmt.Println("Testing DeleteOneChild")
-	//fill later
-	var child *Node
-	if n.Right == nil {
-		child = n.Left
-	} else {
-		child = n.Right
-	}
-	n.ReplaceNode(child)
-	fmt.Println("Exitted ReplaceNode")
-	if n.Color == BLACK {
-		if child.Color == RED {
-			child.Color = BLACK
-		} else {
-			child.DeleteCase1()
-		}
-	}
-	//search for root and return
-	root := child
-	for root.GetParent() != nil {
-		root = root.GetParent()
-	}
-	//'delete' n and return the new root
-	n = nil
-	return root
-
 }
 
 func (tree *RedBlackTree) Delete(val int) {
 	fmt.Println("\nTesting deletion")
-	if tree.Root == nil {
+	if tree.root == nil {
 		return
 	}
 
@@ -366,101 +346,195 @@ func (tree *RedBlackTree) Delete(val int) {
 	currNode, boolean := tree.Search(val)
 	fmt.Println("Value found? ", boolean)
 	//check if has 2 children, and address if so
-	if currNode.Left != nil && currNode.Right != nil {
-		successor := currNode.Right.FindMin()
-		currNode.Data = successor.Data
+	if currNode.left != nil && currNode.right != nil {
+		successor := tree.FindMin(currNode.right)
+		currNode.data = successor.data
 		//change currNode to continue with next cases
 		currNode = successor
 	}
 	//deal with case where 0 or 1 children, returns new root
-	// could we just do tree.Root = currNode.DeleteOneChild?
-	tree.Root = currNode.DeleteOneChild()
+	// could we just do tree.root = currNode.DeleteOneChild?
+	tree.root = tree.DeleteOneChild(currNode)
+	tree.size--
 	//figure out if need to modify to work with my code
-	//may need to bubble up from tree.Root to find root.
+	//may need to bubble up from tree.root to find root.
 
 }
 
-func (n *Node) DeleteCase1() {
-	fmt.Println("Testing DeleteCase1")
-	//terminal case
-	if n.Parent != nil {
-		n.DeleteCase2()
+func (tree *RedBlackTree) DeleteOneChild(n *Node) *Node {
+	fmt.Println("Testing DeleteOneChild")
+	var child, cparent *Node
+	if n.right == nil {
+		child = n.left
+	} else {
+		child = n.right
 	}
-}
-
-func (n *Node) DeleteCase2() {
-	fmt.Println("Testing DeleteCase2")
-	s := n.GetSibling()
-	if s.Color == RED {
-		n.Parent.Color = RED
-		s.Color = BLACK
-		if n == n.Parent.Left {
-			n.Parent.RotateLeft()
+	cparent = n.parent
+	tree.ReplaceNode(n, child)
+	fmt.Println("Exitted ReplaceNode")
+	if n.color == BLACK {
+		if GetColor(child) == RED {
+			child.color = BLACK
 		} else {
-			n.Parent.RotateLeft()
+			tree.DeleteCase1(child, cparent)
 		}
 	}
-	n.DeleteCase3()
+	//search for root and return
+	//currently child is null. need a node still on tree to get root
+	var root *Node
+	if child == nil {
+		//n's parent should be valid node unless is root
+		root = tree.GetParent(n)
+	} else {
+		root = child
+	}
+	//might be able to get rid of conditionals above by checking parent
+	//ie above can set root to cparent
+	for tree.GetParent(root) != nil {
+		root = tree.GetParent(root)
+	}
+	//'delete' n and return the new root
+	n = nil
+	return root
+
 }
 
-func (n *Node) DeleteCase3() {
-	fmt.Println("Testing DeleteCase3")
-	s := n.GetSibling()
-	if n.Parent.Color == BLACK && s.Color == BLACK &&
-		s.Left.Color == BLACK && s.Right.Color == BLACK {
-		s.Color = RED
-		n.Parent.DeleteCase1()
-	} else {
-		n.DeleteCase4()
+func (tree *RedBlackTree) DeleteCase1(n, parent *Node) {
+	fmt.Println("Testing DeleteCase1")
+	//terminal case...
+	//to avoid nil memorys, maybe i could check if n is null and go to case 2.
+	//but that just passes problem along
+	//I could pass the child's new parent instead.. or keep track of it
+	//and use it for the cases instead of the nil value
+	if parent != nil {
+		tree.DeleteCase2(n, parent)
 	}
 }
 
-func (n *Node) DeleteCase4() {
+func (tree *RedBlackTree) DeleteCase2(n, parent *Node) {
+	fmt.Println("Testing DeleteCase2")
+	//could check if n nil, if so get parents child for s
+	var s *Node
+	if n != nil {
+		s = tree.GetSibling(n)
+	} else if n == parent.right {
+		s = parent.left
+	} else {
+		s = parent.right
+	}
+	if GetColor(s) == RED {
+		parent.color = RED
+		s.color = BLACK
+		if n == parent.left {
+			tree.RotateLeft(parent)
+		} else {
+			tree.RotateRight(parent)
+		}
+	}
+	tree.DeleteCase3(n, parent)
+}
+
+func (tree *RedBlackTree) DeleteCase3(n, parent *Node) {
+	fmt.Println("Testing DeleteCase3")
+	var s *Node
+	if n != nil {
+		s = tree.GetSibling(n)
+	} else if n == parent.right {
+		s = parent.left
+	} else {
+		s = parent.right
+	}
+	if GetColor(parent) == BLACK && GetColor(s) == BLACK &&
+		GetColor(s.left) == BLACK && GetColor(s.right) == BLACK {
+		s.color = RED
+		tree.DeleteCase1(parent, parent.parent)
+	} else {
+		tree.DeleteCase4(n, parent)
+	}
+}
+
+func (tree *RedBlackTree) DeleteCase4(n, parent *Node) {
 	fmt.Println("Testing DeleteCase4")
 	//terminal case
-	s := n.GetSibling()
-
-	if n.Parent.Color == RED && s.Color == BLACK &&
-		s.Left.Color == BLACK && s.Right.Color == BLACK {
-		s.Color = RED
-		n.Parent.Color = BLACK
+	var s *Node
+	if n != nil {
+		s = tree.GetSibling(n)
+	} else if n == parent.right {
+		s = parent.left
 	} else {
-		n.DeleteCase5()
+		s = parent.right
+	}
+
+	if GetColor(parent) == RED && GetColor(s) == BLACK &&
+		GetColor(s.left) == BLACK && GetColor(s.right) == BLACK {
+		s.color = RED
+		parent.color = BLACK
+	} else {
+		tree.DeleteCase5(n, parent)
 	}
 }
 
-func (n *Node) DeleteCase5() {
+func (tree *RedBlackTree) DeleteCase5(n, parent *Node) {
 	fmt.Println("Testing DeleteCase5")
-	s := n.GetSibling()
-	if s.Color == BLACK {
-		if n == n.Parent.Left && s.Right.Color == BLACK &&
-			s.Left.Color == RED {
-			s.Color = RED
-			s.Left.Color = BLACK
-			s.RotateRight()
-		} else if n == n.Parent.Right && s.Left.Color == BLACK &&
-			s.Right.Color == RED {
-			s.Color = RED
-			s.Right.Color = BLACK
-			s.RotateLeft()
+	var s *Node
+	if n != nil {
+		s = tree.GetSibling(n)
+	} else if n == parent.right {
+		s = parent.left
+	} else {
+		s = parent.right
+	}
+	if GetColor(s) == BLACK {
+		if n == parent.left && GetColor(s.right) == BLACK &&
+			GetColor(s.left) == RED {
+			s.color = RED
+			s.left.color = BLACK
+			tree.RotateRight(s)
+		} else if n == parent.right && GetColor(s.left) == BLACK &&
+			GetColor(s.right) == RED {
+			s.color = RED
+			s.right.color = BLACK
+			tree.RotateLeft(s)
 		}
-		n.DeleteCase6()
+		tree.DeleteCase6(n, parent)
 	}
 }
 
-func (n *Node) DeleteCase6() {
+func (tree *RedBlackTree) DeleteCase6(n, parent *Node) {
 	fmt.Println("Testing DeleteCase6")
 	//terminal case
-	s := n.GetSibling()
-	s.Color = n.Parent.Color
-	n.Parent.Color = BLACK
-
-	if n == n.Parent.Left {
-		s.Right.Color = BLACK
-		n.Parent.RotateLeft()
+	var s *Node
+	if n != nil {
+		s = tree.GetSibling(n)
+	} else if n == parent.right {
+		s = parent.left
 	} else {
-		s.Left.Color = BLACK
-		n.Parent.RotateRight()
+		s = parent.right
+	}
+	s.color = parent.color
+	parent.color = BLACK
+
+	if n == parent.left {
+		s.right.color = BLACK
+		tree.RotateLeft(parent)
+	} else {
+		s.left.color = BLACK
+		tree.RotateRight(parent)
 	}
 
+}
+
+func (tree *RedBlackTree) GetRoot() *Node {
+	return tree.root
+}
+
+func (tree *RedBlackTree) GetSize() int {
+	return tree.size
+}
+
+func GetColor(n *Node) color_t {
+	if n == nil {
+		return BLACK
+	}
+	return n.color
 }
