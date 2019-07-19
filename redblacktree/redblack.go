@@ -87,7 +87,7 @@ func (tree *RedBlackTree) RotateLeft(n *Node) {
 	if n.right != nil {
 		n.right.parent = n
 	}
-	//check if n is root
+
 	if p != nil {
 		if n == p.left {
 			p.left = newNode
@@ -124,7 +124,6 @@ func (tree *RedBlackTree) RotateRight(n *Node) {
 }
 
 func (tree *RedBlackTree) InOrder(n *Node) {
-	//fmt.Println("Calling InOrder traversal")
 	if n == nil {
 		return
 	}
@@ -175,7 +174,6 @@ func (tree *RedBlackTree) Search(val int) (*Node, bool) {
 func (tree *RedBlackTree) Insert(val int) {
 	fmt.Println("\nTesting Insertion")
 	n := &Node{data: val}
-	//insert node into tree
 	root := tree.root
 	if root == nil {
 		n.parent = nil
@@ -188,7 +186,6 @@ func (tree *RedBlackTree) Insert(val int) {
 	}
 	//repair any Red-Black violations
 	tree.InsertRepair(n)
-	//return root to work with cases 4a/4b
 
 	root = n
 	for tree.GetParent(root) != nil {
@@ -204,7 +201,6 @@ func (tree *RedBlackTree) InsertRecurse(root, n *Node) {
 	//recursively descend tree to find leaf node.
 	if root != nil && n.data < root.data {
 		if root.left != nil {
-			//fmt.Println("\nGoing down left branch")
 			tree.InsertRecurse(root.left, n)
 			return
 		} else {
@@ -213,7 +209,7 @@ func (tree *RedBlackTree) InsertRecurse(root, n *Node) {
 		}
 	} else if root != nil {
 		if root.right != nil {
-			//fmt.Println("\nGoing down right branch")
+
 			tree.InsertRecurse(root.right, n)
 			return
 		} else {
@@ -231,7 +227,7 @@ func (tree *RedBlackTree) InsertRecurse(root, n *Node) {
 
 func (tree *RedBlackTree) InsertRepair(n *Node) {
 	fmt.Println("Calling InsertRepair")
-	//violate any RB violations starting from newly added node
+	//fix any RB violations starting from newly added node
 	if tree.GetParent(n) == nil {
 		tree.InsertCase1(n)
 	} else if tree.GetParent(n).color == BLACK {
@@ -291,7 +287,7 @@ func (tree *RedBlackTree) InsertCase4a(n *Node) {
 func (tree *RedBlackTree) InsertCase4b(n *Node) {
 	fmt.Println("Calling InsertCase4b")
 	//case 4b: n is now on outside of tree. perform rt rotation
-	//on grandparent. p is not parent of n and former g. g is black.
+	//on grandparent. p is now parent of n and former g. g is black.
 	//swap colors with p and g
 	p := tree.GetParent(n)
 	g := tree.GetGrandParent(n)
@@ -324,6 +320,9 @@ func (tree *RedBlackTree) FindMin(n *Node) *Node {
 
 func (tree *RedBlackTree) ReplaceNode(n, child *Node) {
 	fmt.Println("Testing ReplaceNode")
+	/*sets n.parent and n.child to point to each other
+	  circumventing n
+	*/
 	if n.parent != nil {
 		if n == n.parent.left {
 			n.parent.left = child
@@ -343,22 +342,20 @@ func (tree *RedBlackTree) Delete(val int) {
 	}
 
 	//find the node to delete
-	currNode, boolean := tree.Search(val)
+	nodeToDelete, boolean := tree.Search(val)
 	fmt.Println("Value found? ", boolean)
-	//check if has 2 children, and address if so
-	if currNode.left != nil && currNode.right != nil {
-		successor := tree.FindMin(currNode.right)
-		currNode.data = successor.data
-		//change currNode to continue with next cases
-		currNode = successor
-	}
-	//deal with case where 0 or 1 children, returns new root
-	// could we just do tree.root = currNode.DeleteOneChild?
-	tree.root = tree.DeleteOneChild(currNode)
-	tree.size--
-	//figure out if need to modify to work with my code
-	//may need to bubble up from tree.root to find root.
 
+	//check if has 2 children, and move successor node's contents
+	//to the deleted node, then continue delete from successor
+	if nodeToDelete.left != nil && nodeToDelete.right != nil {
+		successor := tree.FindMin(nodeToDelete.right)
+		nodeToDelete.data = successor.data
+		nodeToDelete = successor
+	}
+
+	//deal with case where 0 or 1 children.
+	tree.root = tree.DeleteOneChild(nodeToDelete)
+	tree.size--
 }
 
 func (tree *RedBlackTree) DeleteOneChild(n *Node) *Node {
@@ -369,9 +366,10 @@ func (tree *RedBlackTree) DeleteOneChild(n *Node) *Node {
 	} else {
 		child = n.right
 	}
+	//copy n's parent for the case where the child is a nil node.
+	//call it child's parent because we replace n with child
 	cparent = n.parent
 	tree.ReplaceNode(n, child)
-	fmt.Println("Exitted ReplaceNode")
 	if n.color == BLACK {
 		if GetColor(child) == RED {
 			child.color = BLACK
@@ -380,16 +378,7 @@ func (tree *RedBlackTree) DeleteOneChild(n *Node) *Node {
 		}
 	}
 	//search for root and return
-	//currently child is null. need a node still on tree to get root
-	var root *Node
-	if child == nil {
-		//n's parent should be valid node unless is root
-		root = tree.GetParent(n)
-	} else {
-		root = child
-	}
-	//might be able to get rid of conditionals above by checking parent
-	//ie above can set root to cparent
+	root := cparent
 	for tree.GetParent(root) != nil {
 		root = tree.GetParent(root)
 	}
@@ -401,11 +390,7 @@ func (tree *RedBlackTree) DeleteOneChild(n *Node) *Node {
 
 func (tree *RedBlackTree) DeleteCase1(n, parent *Node) {
 	fmt.Println("Testing DeleteCase1")
-	//terminal case...
-	//to avoid nil memorys, maybe i could check if n is null and go to case 2.
-	//but that just passes problem along
-	//I could pass the child's new parent instead.. or keep track of it
-	//and use it for the cases instead of the nil value
+	//terminal case.
 	if parent != nil {
 		tree.DeleteCase2(n, parent)
 	}
@@ -413,7 +398,7 @@ func (tree *RedBlackTree) DeleteCase1(n, parent *Node) {
 
 func (tree *RedBlackTree) DeleteCase2(n, parent *Node) {
 	fmt.Println("Testing DeleteCase2")
-	//could check if n nil, if so get parents child for s
+	//get sibling
 	var s *Node
 	if n != nil {
 		s = tree.GetSibling(n)
@@ -422,6 +407,7 @@ func (tree *RedBlackTree) DeleteCase2(n, parent *Node) {
 	} else {
 		s = parent.right
 	}
+
 	if GetColor(s) == RED {
 		parent.color = RED
 		s.color = BLACK
@@ -444,6 +430,7 @@ func (tree *RedBlackTree) DeleteCase3(n, parent *Node) {
 	} else {
 		s = parent.right
 	}
+
 	if GetColor(parent) == BLACK && GetColor(s) == BLACK &&
 		GetColor(s.left) == BLACK && GetColor(s.right) == BLACK {
 		s.color = RED
@@ -484,6 +471,7 @@ func (tree *RedBlackTree) DeleteCase5(n, parent *Node) {
 	} else {
 		s = parent.right
 	}
+
 	if GetColor(s) == BLACK {
 		if n == parent.left && GetColor(s.right) == BLACK &&
 			GetColor(s.left) == RED {
@@ -511,6 +499,7 @@ func (tree *RedBlackTree) DeleteCase6(n, parent *Node) {
 	} else {
 		s = parent.right
 	}
+
 	s.color = parent.color
 	parent.color = BLACK
 

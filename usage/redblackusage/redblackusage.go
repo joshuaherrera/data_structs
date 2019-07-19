@@ -41,8 +41,10 @@ func main() {
 	tree.Delete(70)
 	tree.PreOrder(tree.GetRoot())
 	fmt.Println("\nSize is: ", tree.GetSize())
-	tree.Delete(100)
+	tree.Delete(10)
 	tree.PreOrder(tree.GetRoot())
+	fmt.Println("\nSize is: ", tree.GetSize())
+	tree.Clear()
 	fmt.Println("\nSize is: ", tree.GetSize())
 
 	/*	node, bool_val := tree.Search(75)
