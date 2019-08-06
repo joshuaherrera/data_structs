@@ -1,7 +1,7 @@
 package stack
 
 type Stack struct {
-	Items []int
+	Items []interface{}
 	Top   int
 }
 
@@ -12,12 +12,12 @@ func (s *Stack) Push(v int) {
 }
 
 //constant time
-func (s *Stack) Peek() int {
+func (s *Stack) Peek() interface{} {
 	return s.Items[s.Top-1]
 }
 
 //constant time
-func (s *Stack) Pop() int {
+func (s *Stack) Pop() interface{} {
 	s.Top = s.Top - 1
 	v := s.Items[s.Top]
 	s.Items = append(s.Items[:s.Top])

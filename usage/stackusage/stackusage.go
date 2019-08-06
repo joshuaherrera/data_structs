@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	s := stack.Stack{Items: make([]int, 0, 10), Top: 0}
+	s := new(stack.Stack)
 	s.Push(5)
 	s.Push(10)
 	s.Push(15)
