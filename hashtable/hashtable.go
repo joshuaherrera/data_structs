@@ -97,7 +97,7 @@ func (ht *HashTable) resize() {
 	//due to Put incrementing size
 	ht.size = 0
 	//double the array, then find nearest prime for efficiency
-	newCap := nearestPrime(len(ht.buckets) * 2)
+	newCap := nearestPrime(len(ht.buckets)*2 + 1)
 	fmt.Println("newCap is ", newCap)
 
 	a := make([][]TableItem, newCap)
