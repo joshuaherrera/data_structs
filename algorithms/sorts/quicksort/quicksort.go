@@ -1,5 +1,8 @@
 package quicksort
 
+//best case space: O(nlgn), avg: O(nlgn), worst: O(n^2)
+//memory avg: O(lgn), worst: O(n)
+//unstable
 func Sort(arr []int, lo int, hi int) {
 	if lo < hi {
 		p := partition(arr, lo, hi)

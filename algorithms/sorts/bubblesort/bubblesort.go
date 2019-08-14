@@ -1,6 +1,8 @@
 package bubblesort
 
-//for ease of use, compatible with integers only
+//best case space complexity: O(n), avg & worst: O(n^2)
+//space: 1
+//stable
 func Sort(arr []int) {
 	var swapped bool
 	for {

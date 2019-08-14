@@ -5,6 +5,9 @@ import (
 	"sort"
 )
 
+//worst case: O(n^2), average: O(n + n^2/k + k),
+//worst space: O(n*k)
+//stable
 func Sort(arr []int, k int) []int {
 	if len(arr) == 0 {
 		return []int{}

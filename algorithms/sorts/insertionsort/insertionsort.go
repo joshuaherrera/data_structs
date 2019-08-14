@@ -1,5 +1,8 @@
 package insertionsort
 
+//best space complexity: O(n), avg: O(n^2), worst: O(n^2)
+//space: 1
+//stable
 func Sort(arr []int) {
 	i := 1
 	var j int

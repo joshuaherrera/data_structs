@@ -4,6 +4,9 @@ import (
 	"fmt"
 )
 
+//best, avg, worst case space complexity: O(nlgn)
+//space complexity : O(n)
+//stable
 func Sort(input []int, buffer []int) {
 	fmt.Println(input)
 	copy(buffer, input)
