@@ -5,7 +5,7 @@ import (
 )
 
 type BinaryTree struct {
-	data  int
+	data  interface{}
 	left  *BinaryTree
 	right *BinaryTree
 }
@@ -16,7 +16,7 @@ func (bt *BinaryTree) Init() {
 	bt.right = nil
 }
 
-func (bt *BinaryTree) CreateNode(v int) {
+func (bt *BinaryTree) CreateNode(v interface{}) {
 	bt.data = v
 	bt.left = nil
 	bt.right = nil
@@ -49,9 +49,32 @@ func (bt *BinaryTree) PostOrder() {
 	fmt.Printf("%v ", bt.data)
 }
 
+func (bt *BinaryTree) LevelOrder() {
+	if bt == nil {
+		return
+	}
+	q := make([]*BinaryTree, 0)
+	discovered := make(map[*BinaryTree]bool)
+	discovered[bt] = true
+	q = append(q, bt)
+	for len(q) > 0 {
+		temp := q[0]
+		q = q[1:]
+		fmt.Printf("%v ", temp.data)
+		if _, ok := discovered[temp.left]; !ok && temp.left != nil {
+			q = append(q, temp.left)
+		}
+		if _, ok := discovered[temp.right]; !ok && temp.right != nil {
+			q = append(q, temp.right)
+		}
+
+	}
+
+}
+
 //TODO: deletion
 
-func (bt *BinaryTree) Insert(v int) {
+func (bt *BinaryTree) Insert(v interface{}) {
 	var q []*BinaryTree
 	q = append(q, bt)
 

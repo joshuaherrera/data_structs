@@ -6,7 +6,7 @@ type Stack struct {
 }
 
 //constant time amoritized.
-func (s *Stack) Push(v int) {
+func (s *Stack) Push(v interface{}) {
 	s.Items = append(s.Items, v)
 	s.Top = len(s.Items)
 }

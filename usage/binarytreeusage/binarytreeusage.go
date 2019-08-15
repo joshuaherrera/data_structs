@@ -21,4 +21,6 @@ func main() {
 	fmt.Println()
 	bt.PostOrder()
 	fmt.Println()
+	bt.LevelOrder()
+	fmt.Println()
 }

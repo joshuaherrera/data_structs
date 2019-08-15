@@ -23,7 +23,7 @@ func (q *Queue) Init() {
 func (q *Queue) SetEnd() {
 	p := new(linkedlist.Node)
 	p = q.List.Head
-	if p.Data == 0 && p.Next == nil {
+	if p.Data == nil && p.Next == nil {
 		//empty queue
 		fmt.Println("empty queue, setting end")
 		q.End = p
@@ -37,7 +37,7 @@ func (q *Queue) SetEnd() {
 }
 
 //add to end of queue. uses pointer to end for time efficiency
-func (q *Queue) Enqueue(v int) {
+func (q *Queue) Enqueue(v interface{}) {
 	if q.End == nil {
 		fmt.Println("Enqueuing, setting end first")
 		q.SetEnd()
@@ -51,14 +51,14 @@ func (q *Queue) Enqueue(v int) {
 }
 
 //remove value from front of queue
-func (q *Queue) Dequeue() int {
+func (q *Queue) Dequeue() interface{} {
 	value := q.List.Head.Data
 	q.List.RemoveStart()
 	return value
 }
 
 //peek at front of queue
-func (q *Queue) Peek() int {
+func (q *Queue) Peek() interface{} {
 	return q.List.Head.Data
 }
 

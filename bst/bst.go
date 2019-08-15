@@ -10,6 +10,7 @@ type Node struct {
 	  new int variable, key, that keeps sorted order, along
 	  with the value to store.
 	*/
+	//Key    int
 	Data   int
 	Left   *Node
 	Right  *Node

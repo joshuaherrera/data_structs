@@ -3,7 +3,7 @@ package linkedlist
 import "fmt"
 
 type Node struct {
-	Data int
+	Data interface{}
 	Next *Node
 }
 
@@ -13,7 +13,7 @@ type LinkedList struct {
 
 //need to work on removal when list is empty
 //add the value to the end of a linked list
-func (list *LinkedList) Add(v int) {
+func (list *LinkedList) Add(v interface{}) {
 	//create a temp node for the new value and a placeholder node
 	temp, p := new(Node), new(Node)
 	temp.Data = v
@@ -32,7 +32,7 @@ func (list *LinkedList) Add(v int) {
 }
 
 //add a value after some node
-func (list *LinkedList) AddAfter(n *Node, v int) {
+func (list *LinkedList) AddAfter(n *Node, v interface{}) {
 	p, newN := new(Node), new(Node)
 	newN.Data = v
 	if list.Head.Next == nil && list.Head.Data == 0 {
@@ -51,7 +51,7 @@ func (list *LinkedList) AddAfter(n *Node, v int) {
 }
 
 //add a value at the start of a linked list
-func (list *LinkedList) AddStart(v int) {
+func (list *LinkedList) AddStart(v interface{}) {
 	newNode := new(Node)
 	newNode.Data = v
 	newNode.Next = list.Head
@@ -88,7 +88,7 @@ func (list *LinkedList) RemoveStart() {
 }
 
 //check if value in linked list
-func (list *LinkedList) Contains(v int) bool {
+func (list *LinkedList) Contains(v interface{}) bool {
 	p := new(Node)
 	p = list.Head
 	for p != nil {
@@ -101,7 +101,7 @@ func (list *LinkedList) Contains(v int) bool {
 }
 
 //return some value
-func (list *LinkedList) Get(v int) (*Node, bool) {
+func (list *LinkedList) Get(v interface{}) (*Node, bool) {
 	p := new(Node)
 	p = list.Head
 	for p != nil {
