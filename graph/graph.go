@@ -52,7 +52,7 @@ func (g *Graph) AddEdge(v interface{}, w interface{}) error {
 	}
 	//look into struct here
 	g.adjList[v][w] = struct{}{}
-	g.adjList[v][w] = struct{}{}
+	g.adjList[w][v] = struct{}{}
 	g.e++
 	return nil
 
@@ -80,6 +80,10 @@ func (g *Graph) Adj(v interface{}) (interface{}, error) {
 	}
 
 	return adj, nil
+}
+
+func (g *Graph) AdjList() map[interface{}]map[interface{}]struct{} {
+	return g.adjList
 }
 
 func NewGraph() *Graph {

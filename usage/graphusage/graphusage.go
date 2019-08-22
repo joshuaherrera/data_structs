@@ -23,5 +23,6 @@ func main() {
 	fmt.Println("Testing adjacency")
 	list, e := g.Adj("A")
 	fmt.Println("Adj of A", list, e)
+	fmt.Println("\n\n", g.AdjList())
 
 }
