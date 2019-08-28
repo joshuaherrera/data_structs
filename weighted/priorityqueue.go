@@ -5,7 +5,7 @@ package weighted
 type PriorityQueue []Vertex
 
 func (pq PriorityQueue) Len() int           { return len(pq) }
-func (pq PriorityQueue) Less(i, j int) bool { return pq[i].dist < pq[j].dist }
+func (pq PriorityQueue) Less(i, j int) bool { return pq[i].cost < pq[j].cost }
 func (pq PriorityQueue) Swap(i, j int)      { pq[i], pq[j] = pq[j], pq[i] }
 func (pq PriorityQueue) IsEmpty() bool      { return len(pq) == 0 }
 
@@ -23,11 +23,11 @@ func (pq *PriorityQueue) Push(v Vertex) {
 				} else {
 					updated = updated[:i]
 				}
-			} else if v.dist < w.dist {
+			} else if v.cost < w.cost {
 				updated[i] = v
 			}
 			changed = true
-		} else if v.dist < w.dist {
+		} else if v.cost < w.cost {
 			//insert v before w in the slice
 			changed = true
 			updated = append(old[:i], v)

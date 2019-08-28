@@ -2,10 +2,17 @@ package weighted
 
 import "fmt"
 
-func (g *Graph) ShortestPath(start, dest interface{}) ([]interface{}, int) {
+func H(v Vertex) int {
+	//for simplicity's sake, hard code heuristic per vertex
+	//could be changed as needed
+	return v.h
+}
+
+func (g *Graph) AStar(start, dest interface{}) ([]interface{}, int) {
 	/*
 		Note: all vertex distances should be set to "infitity"
 		when vertices are initialized. see graph_test.go
+		for graph_test, we are hardcoding the heuristic val
 	*/
 	src := start
 	if len(g.visited) != 0 {
@@ -19,13 +26,13 @@ func (g *Graph) ShortestPath(start, dest interface{}) ([]interface{}, int) {
 	//init heap with adjacent vertices to src
 	for id, weight := range v.adj {
 		x := g.vertices[id]
-		x.cost = weight
-		x.from = src
+		//normally we'd add distance, but from src to neighbor,
+		//distance is just weight
+		x.cost = weight + H(x)
 		fmt.Printf("New cost for vertex %v is %v from %v\n", id, x.cost, src)
+		x.from = src
 		g.vertices[id] = x
 		pq.Push(x)
-
-		//fmt.Println(pq)
 	}
 
 	for src != dest {
@@ -45,11 +52,17 @@ func (g *Graph) ShortestPath(start, dest interface{}) ([]interface{}, int) {
 				continue
 			}
 			neighbor := g.vertices[w]
-			distance := weight + v.cost
-			if distance < neighbor.cost {
-				neighbor.cost = distance
-				neighbor.from = src
+
+			//when considering neighbors, we only care about the
+			//neighbor's heursitic value, so we subtract
+			//the current vertex's heuristic value.
+			distance := weight + v.cost - H(v)
+			//fmt.Printf("Distance for %v is now %v\n", w, distance)
+			tentativeGScore := distance + H(neighbor)
+			if tentativeGScore < neighbor.cost {
+				neighbor.cost = tentativeGScore
 				fmt.Printf("New cost for vertex %v is %v from %v\n", w, neighbor.cost, src)
+				neighbor.from = src
 				g.vertices[w] = neighbor
 
 			}

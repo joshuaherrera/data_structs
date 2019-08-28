@@ -4,8 +4,10 @@ import "errors"
 
 type Vertex struct {
 	id   interface{}
-	dist int
+	cost int
 	adj  map[interface{}]int //adj[vertex id] = weight
+	from interface{}
+	h    int
 }
 
 type Graph struct {

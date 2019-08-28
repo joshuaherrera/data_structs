@@ -1,28 +1,29 @@
 package weighted
 
 import (
+	"reflect"
 	"testing"
 )
 
 func TestVertices(t *testing.T) {
 	v1 := Vertex{
 		id:   1,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v2 := Vertex{
 		id:   2,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v3 := Vertex{
 		id:   3,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v4 := Vertex{
 		id:   4,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 
@@ -49,22 +50,22 @@ func TestVertices(t *testing.T) {
 func TestEdges(t *testing.T) {
 	v1 := Vertex{
 		id:   1,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v2 := Vertex{
 		id:   2,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v3 := Vertex{
 		id:   3,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v4 := Vertex{
 		id:   4,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 
@@ -94,35 +95,35 @@ func TestEdges(t *testing.T) {
 
 }
 
-func TestShortestPath(t *testing.T) {
+func TestDijkstraShortestPath(t *testing.T) {
 	v1 := Vertex{
 		id:   1,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v2 := Vertex{
 		id:   2,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v3 := Vertex{
 		id:   3,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v4 := Vertex{
 		id:   4,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v5 := Vertex{
 		id:   5,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 	v6 := Vertex{
 		id:   6,
-		dist: 999999,
+		cost: 999999,
 		adj:  make(map[interface{}]int),
 	}
 
@@ -136,20 +137,272 @@ func TestShortestPath(t *testing.T) {
 
 	cases := []struct {
 		v, w, want int
+		wpath      []interface{}
 	}{
-		{1, 4, 12},
-		{1, 3, 6},
-		{2, 4, 7},
-		{1, 2, 5},
-		{2, 3, 1},
-		{1, 6, 999999999},
+		{1, 4, 12, []interface{}{1, 2, 3, 4}},
+		{1, 3, 6, []interface{}{1, 2, 3}},
+		{2, 4, 7, []interface{}{2, 3, 4}},
+		{1, 2, 5, []interface{}{1, 2}},
+		{2, 3, 1, []interface{}{2, 3}},
+		{1, 6, 999999999, nil},
 	}
 
 	for _, c := range cases {
-		got := g.ShortestPath(c.v, c.w)
+		path, got := g.ShortestPath(c.v, c.w)
 		if got != c.want {
 			t.Errorf("Error: got %v for src %v to dest %v, wanted %v", got, c.v, c.w, c.want)
 		}
+		if reflect.DeepEqual(path, c.wpath) == false {
+			t.Errorf("Error: got %v path, wanted %v path", path, c.wpath)
+		}
 	}
 
+}
+
+func TestDijkstraTwo(t *testing.T) {
+	/*uses same graph as A* to see difference in work performed*/
+	s := Vertex{
+		id:   "S",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    10,
+	}
+	a := Vertex{
+		id:   "A",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    9,
+	}
+	b := Vertex{
+		id:   "B",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    7,
+	}
+	c := Vertex{
+		id:   "C",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    8,
+	}
+	d := Vertex{
+		id:   "D",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    8,
+	}
+	e := Vertex{
+		id:   "E",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    0,
+	}
+	f := Vertex{
+		id:   "F",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    6,
+	}
+	g := Vertex{
+		id:   "G",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    3,
+	}
+	h := Vertex{
+		id:   "H",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    6,
+	}
+	i := Vertex{
+		id:   "I",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    4,
+	}
+	j := Vertex{
+		id:   "J",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    4,
+	}
+	k := Vertex{
+		id:   "K",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    3,
+	}
+	l := Vertex{
+		id:   "L",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    6,
+	}
+
+	graph := NewGraph()
+	graph.AddEdge(s, a, 7)
+	graph.AddEdge(s, b, 2)
+	graph.AddEdge(s, c, 3)
+	graph.AddEdge(a, b, 3)
+	graph.AddEdge(a, d, 4)
+	graph.AddEdge(b, d, 4)
+	graph.AddEdge(b, h, 1)
+	graph.AddEdge(d, f, 5)
+	graph.AddEdge(h, f, 3)
+	graph.AddEdge(h, g, 2)
+	graph.AddEdge(g, e, 2)
+	graph.AddEdge(c, l, 2)
+	graph.AddEdge(l, i, 4)
+	graph.AddEdge(l, j, 4)
+	graph.AddEdge(i, j, 6)
+	graph.AddEdge(i, k, 4)
+	graph.AddEdge(j, k, 4)
+	graph.AddEdge(k, e, 5)
+
+	cases := []struct {
+		v, w  string
+		want  int
+		wpath []interface{}
+	}{
+		{"S", "E", 7, []interface{}{"S", "B", "H", "G", "E"}},
+		/*		{1, 3, 6, []interface{}{1, 2, 3}},
+				{2, 4, 7, []interface{}{2, 3, 4}},
+				{1, 2, 5, []interface{}{1, 2}},
+				{2, 3, 1, []interface{}{2, 3}},
+				{1, 6, 999999999, nil},*/
+	}
+	for _, c := range cases {
+		path, got := graph.ShortestPath(c.v, c.w)
+		if got != c.want {
+			t.Errorf("Error: got %v cost, wanted %v", got, c.want)
+		}
+		if reflect.DeepEqual(path, c.wpath) == false {
+			t.Errorf("Error: got %v path, wanted %v", path, c.wpath)
+		}
+	}
+}
+
+func TestAStarShortestPath(t *testing.T) {
+	/*used https://www.youtube.com/watch?v=ySN5Wnu88nE as example*/
+	s := Vertex{
+		id:   "S",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    10,
+	}
+	a := Vertex{
+		id:   "A",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    9,
+	}
+	b := Vertex{
+		id:   "B",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    7,
+	}
+	c := Vertex{
+		id:   "C",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    8,
+	}
+	d := Vertex{
+		id:   "D",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    8,
+	}
+	e := Vertex{
+		id:   "E",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    0,
+	}
+	f := Vertex{
+		id:   "F",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    6,
+	}
+	g := Vertex{
+		id:   "G",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    3,
+	}
+	h := Vertex{
+		id:   "H",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    6,
+	}
+	i := Vertex{
+		id:   "I",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    4,
+	}
+	j := Vertex{
+		id:   "J",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    4,
+	}
+	k := Vertex{
+		id:   "K",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    3,
+	}
+	l := Vertex{
+		id:   "L",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+		h:    6,
+	}
+
+	graph := NewGraph()
+	graph.AddEdge(s, a, 7)
+	graph.AddEdge(s, b, 2)
+	graph.AddEdge(s, c, 3)
+	graph.AddEdge(a, b, 3)
+	graph.AddEdge(a, d, 4)
+	graph.AddEdge(b, d, 4)
+	graph.AddEdge(b, h, 1)
+	graph.AddEdge(d, f, 5)
+	graph.AddEdge(h, f, 3)
+	graph.AddEdge(h, g, 2)
+	graph.AddEdge(g, e, 2)
+	graph.AddEdge(c, l, 2)
+	graph.AddEdge(l, i, 4)
+	graph.AddEdge(l, j, 4)
+	graph.AddEdge(i, j, 6)
+	graph.AddEdge(i, k, 4)
+	graph.AddEdge(j, k, 4)
+	graph.AddEdge(k, e, 5)
+
+	cases := []struct {
+		v, w  string
+		want  int
+		wpath []interface{}
+	}{
+		{"S", "E", 7, []interface{}{"S", "B", "H", "G", "E"}},
+		/*		{1, 3, 6, []interface{}{1, 2, 3}},
+				{2, 4, 7, []interface{}{2, 3, 4}},
+				{1, 2, 5, []interface{}{1, 2}},
+				{2, 3, 1, []interface{}{2, 3}},
+				{1, 6, 999999999, nil},*/
+	}
+	for _, c := range cases {
+		path, got := graph.AStar(c.v, c.w)
+		if got != c.want {
+			t.Errorf("Error: got %v cost, wanted %v", got, c.want)
+		}
+		if reflect.DeepEqual(path, c.wpath) == false {
+			t.Errorf("Error: got %v path, wanted %v", path, c.wpath)
+		}
+	}
 }
