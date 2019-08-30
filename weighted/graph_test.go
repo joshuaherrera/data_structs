@@ -92,8 +92,6 @@ func TestEdges(t *testing.T) {
 		t.Errorf("Error: got %v edges, wanted %v", g.E(), 5)
 	}
 
-	//fmt.Println(g.G())
-
 }
 
 func TestDijkstraShortestPath(t *testing.T) {
@@ -268,11 +266,6 @@ func TestDijkstraTwo(t *testing.T) {
 		wpath []interface{}
 	}{
 		{"S", "E", 7, []interface{}{"S", "B", "H", "G", "E"}},
-		/*		{1, 3, 6, []interface{}{1, 2, 3}},
-				{2, 4, 7, []interface{}{2, 3, 4}},
-				{1, 2, 5, []interface{}{1, 2}},
-				{2, 3, 1, []interface{}{2, 3}},
-				{1, 6, 999999999, nil},*/
 	}
 	for _, c := range cases {
 		graph.ClearVisited()
@@ -393,11 +386,6 @@ func TestAStarShortestPath(t *testing.T) {
 		wpath []interface{}
 	}{
 		{"S", "E", 7, []interface{}{"S", "B", "H", "G", "E"}},
-		/*		{1, 3, 6, []interface{}{1, 2, 3}},
-				{2, 4, 7, []interface{}{2, 3, 4}},
-				{1, 2, 5, []interface{}{1, 2}},
-				{2, 3, 1, []interface{}{2, 3}},
-				{1, 6, 999999999, nil},*/
 	}
 	for _, c := range cases {
 		graph.ClearVisited()
@@ -503,12 +491,6 @@ func TestDFSRecur(t *testing.T) {
 		want bool
 	}{
 		{"S", true},
-		//{"S", "X", false},
-		/*		{1, 3, 6, []interface{}{1, 2, 3}},
-				{2, 4, 7, []interface{}{2, 3, 4}},
-				{1, 2, 5, []interface{}{1, 2}},
-				{2, 3, 1, []interface{}{2, 3}},
-				{1, 6, 999999999, nil},*/
 	}
 	/*for this test, just want to make sure the path is dfs in console*/
 	for _, c := range cases {
@@ -719,7 +701,6 @@ func TestBFS(t *testing.T) {
 		{"S", "E", true},
 		{"S", "X", false},
 	}
-	/*for this test, just want to make sure the path is dfs in console*/
 	for i, c := range cases {
 		fmt.Println("\nCase ", i)
 		graph.ClearVisited()

@@ -74,9 +74,7 @@ func (g *Graph) buildPath(end *Vertex, start interface{}) []interface{} {
 	path := make([]interface{}, 0)
 	v := *end
 	path = append(path, v.id)
-	//fmt.Println("building path")
 	for v.id != start {
-		//fmt.Printf("\ncurr vertex: %v\n", v.id)
 		path = append(path, v.from)
 		v = g.vertices[v.from]
 	}

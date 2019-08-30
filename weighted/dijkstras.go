@@ -22,8 +22,6 @@ func (g *Graph) ShortestPath(start, dest interface{}) ([]interface{}, int) {
 		fmt.Printf("New cost for vertex %v is %v from %v\n", id, x.cost, src)
 		g.vertices[id] = x
 		pq.Push(x)
-
-		//fmt.Println(pq)
 	}
 
 	for src != dest {
