@@ -7,7 +7,7 @@ type Vertex struct {
 	cost int
 	adj  map[interface{}]int //adj[vertex id] = weight
 	from interface{}
-	h    int
+	h    int //used for A* search as a hardcoded heuristic value
 }
 
 type Graph struct {

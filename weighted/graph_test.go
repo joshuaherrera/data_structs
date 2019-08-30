@@ -406,3 +406,111 @@ func TestAStarShortestPath(t *testing.T) {
 		}
 	}
 }
+
+func TestDFSRecur(t *testing.T) {
+	s := Vertex{
+		id:   "S",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	a := Vertex{
+		id:   "A",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	b := Vertex{
+		id:   "B",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	c := Vertex{
+		id:   "C",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	d := Vertex{
+		id:   "D",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	e := Vertex{
+		id:   "E",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	f := Vertex{
+		id:   "F",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	g := Vertex{
+		id:   "G",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	h := Vertex{
+		id:   "H",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	i := Vertex{
+		id:   "I",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	j := Vertex{
+		id:   "J",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	k := Vertex{
+		id:   "K",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	l := Vertex{
+		id:   "L",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+
+	graph := NewGraph()
+	graph.AddEdge(s, a, 0)
+	graph.AddEdge(s, b, 0)
+	graph.AddEdge(s, c, 0)
+	graph.AddEdge(a, b, 0)
+	graph.AddEdge(a, d, 0)
+	graph.AddEdge(b, d, 0)
+	graph.AddEdge(b, h, 0)
+	graph.AddEdge(d, f, 0)
+	graph.AddEdge(h, f, 0)
+	graph.AddEdge(h, g, 0)
+	graph.AddEdge(g, e, 0)
+	graph.AddEdge(c, l, 0)
+	graph.AddEdge(l, i, 0)
+	graph.AddEdge(l, j, 0)
+	graph.AddEdge(i, j, 0)
+	graph.AddEdge(i, k, 0)
+	graph.AddEdge(j, k, 0)
+	graph.AddEdge(k, e, 0)
+
+	cases := []struct {
+		v, w string
+		want bool
+	}{
+		{"S", true},
+		//{"S", "X", false},
+		/*		{1, 3, 6, []interface{}{1, 2, 3}},
+				{2, 4, 7, []interface{}{2, 3, 4}},
+				{1, 2, 5, []interface{}{1, 2}},
+				{2, 3, 1, []interface{}{2, 3}},
+				{1, 6, 999999999, nil},*/
+	}
+	/*for this test, just want to make sure the path is dfs in console*/
+	for _, c := range cases {
+		got := graph.DFS(c.v)
+		if got != c.want {
+			t.Errorf("Error: got %v vertex, wanted %v", got, c.want)
+		}
+	}
+}
