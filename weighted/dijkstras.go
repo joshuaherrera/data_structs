@@ -55,20 +55,7 @@ func (g *Graph) ShortestPath(start, dest interface{}) ([]interface{}, int) {
 		}
 	}
 	v = g.vertices[dest]
-
-	path := make([]interface{}, 0)
-	path = append(path, v.id)
-	other := v
-	for other.id != start {
-		//fmt.Println("making array of path")
-		path = append(path, other.from)
-		other = g.vertices[other.from]
-	}
-	// reverse path to get start to end
-	for i := len(path)/2 - 1; i >= 0; i-- {
-		opp := len(path) - 1 - i
-		path[i], path[opp] = path[opp], path[i]
-	}
+	path := g.buildPath(&v, start)
 	fmt.Println(path, v.cost)
 	return path, v.cost
 }

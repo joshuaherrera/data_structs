@@ -1,6 +1,8 @@
 package weighted
 
-import "errors"
+import (
+	"errors"
+)
 
 type Vertex struct {
 	id   interface{}
@@ -68,9 +70,36 @@ func (g *Graph) ClearVisited() {
 	g.visited = make(map[interface{}]bool)
 }
 
+func (g *Graph) buildPath(end *Vertex, start interface{}) []interface{} {
+	path := make([]interface{}, 0)
+	v := *end
+	path = append(path, v.id)
+	//fmt.Println("building path")
+	for v.id != start {
+		//fmt.Printf("\ncurr vertex: %v\n", v.id)
+		path = append(path, v.from)
+		v = g.vertices[v.from]
+	}
+	// reverse path to get start to end
+	for i := len(path)/2 - 1; i >= 0; i-- {
+		opp := len(path) - 1 - i
+		path[i], path[opp] = path[opp], path[i]
+	}
+	return path
+}
+
 func NewGraph() *Graph {
 	return &Graph{
 		vertices: make(map[interface{}]Vertex),
 		visited:  make(map[interface{}]bool),
 	}
+}
+
+func containsVertex(arr []interface{}, v interface{}) bool {
+	for _, w := range arr {
+		if v == w {
+			return true
+		}
+	}
+	return false
 }

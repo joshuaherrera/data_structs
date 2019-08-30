@@ -2,15 +2,6 @@ package weighted
 
 import "fmt"
 
-func containsVertex(arr []interface{}, v interface{}) bool {
-	for _, w := range arr {
-		if v == w {
-			return true
-		}
-	}
-	return false
-}
-
 func (g *Graph) DFS(curr interface{}) bool {
 	fmt.Printf("%v ", curr)
 	//visited = append(visited, curr)
