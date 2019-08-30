@@ -64,6 +64,10 @@ func (g *Graph) AddEdge(v, w Vertex, weight int) error {
 
 }
 
+func (g *Graph) ClearVisited() {
+	g.visited = make(map[interface{}]bool)
+}
+
 func NewGraph() *Graph {
 	return &Graph{
 		vertices: make(map[interface{}]Vertex),

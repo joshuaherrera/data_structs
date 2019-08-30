@@ -1,6 +1,7 @@
 package weighted
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -148,6 +149,7 @@ func TestDijkstraShortestPath(t *testing.T) {
 	}
 
 	for _, c := range cases {
+		g.ClearVisited()
 		path, got := g.ShortestPath(c.v, c.w)
 		if got != c.want {
 			t.Errorf("Error: got %v for src %v to dest %v, wanted %v", got, c.v, c.w, c.want)
@@ -273,6 +275,7 @@ func TestDijkstraTwo(t *testing.T) {
 				{1, 6, 999999999, nil},*/
 	}
 	for _, c := range cases {
+		graph.ClearVisited()
 		path, got := graph.ShortestPath(c.v, c.w)
 		if got != c.want {
 			t.Errorf("Error: got %v cost, wanted %v", got, c.want)
@@ -397,6 +400,7 @@ func TestAStarShortestPath(t *testing.T) {
 				{1, 6, 999999999, nil},*/
 	}
 	for _, c := range cases {
+		graph.ClearVisited()
 		path, got := graph.AStar(c.v, c.w)
 		if got != c.want {
 			t.Errorf("Error: got %v cost, wanted %v", got, c.want)
@@ -495,7 +499,7 @@ func TestDFSRecur(t *testing.T) {
 	graph.AddEdge(k, e, 0)
 
 	cases := []struct {
-		v, w string
+		v    string
 		want bool
 	}{
 		{"S", true},
@@ -508,9 +512,115 @@ func TestDFSRecur(t *testing.T) {
 	}
 	/*for this test, just want to make sure the path is dfs in console*/
 	for _, c := range cases {
+		graph.ClearVisited()
 		got := graph.DFS(c.v)
 		if got != c.want {
 			t.Errorf("Error: got %v vertex, wanted %v", got, c.want)
+		}
+	}
+}
+
+func TestDFSIter(t *testing.T) {
+	s := Vertex{
+		id:   "S",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	a := Vertex{
+		id:   "A",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	b := Vertex{
+		id:   "B",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	c := Vertex{
+		id:   "C",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	d := Vertex{
+		id:   "D",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	e := Vertex{
+		id:   "E",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	f := Vertex{
+		id:   "F",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	g := Vertex{
+		id:   "G",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	h := Vertex{
+		id:   "H",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	i := Vertex{
+		id:   "I",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	j := Vertex{
+		id:   "J",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	k := Vertex{
+		id:   "K",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+	l := Vertex{
+		id:   "L",
+		cost: 999999,
+		adj:  make(map[interface{}]int),
+	}
+
+	graph := NewGraph()
+	graph.AddEdge(s, a, 0)
+	graph.AddEdge(s, b, 0)
+	graph.AddEdge(s, c, 0)
+	graph.AddEdge(a, b, 0)
+	graph.AddEdge(a, d, 0)
+	graph.AddEdge(b, d, 0)
+	graph.AddEdge(b, h, 0)
+	graph.AddEdge(d, f, 0)
+	graph.AddEdge(h, f, 0)
+	graph.AddEdge(h, g, 0)
+	graph.AddEdge(g, e, 0)
+	graph.AddEdge(c, l, 0)
+	graph.AddEdge(l, i, 0)
+	graph.AddEdge(l, j, 0)
+	graph.AddEdge(i, j, 0)
+	graph.AddEdge(i, k, 0)
+	graph.AddEdge(j, k, 0)
+	graph.AddEdge(k, e, 0)
+
+	cases := []struct {
+		v, w string
+		want bool
+	}{
+		{"S", "E", true},
+		{"S", "X", false},
+	}
+	/*for this test, just want to make sure the path is dfs in console*/
+	for i, c := range cases {
+		fmt.Println("\nCase ", i)
+		graph.ClearVisited()
+		vertex, got := graph.DFSIter(c.v, c.w)
+		if got != c.want {
+			t.Errorf("Error: got %v vertex %v bool, wanted %v", vertex, got, c.want)
 		}
 	}
 }

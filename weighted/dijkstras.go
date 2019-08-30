@@ -6,12 +6,10 @@ func (g *Graph) ShortestPath(start, dest interface{}) ([]interface{}, int) {
 	/*
 		Note: all vertex distances should be set to "infitity"
 		when vertices are initialized. see graph_test.go
+		Also, make sure visited slice is cleared of values for
+		subsequent runs.
 	*/
 	src := start
-	if len(g.visited) != 0 {
-		//clear map on subsequent runs for testing purposes
-		g.visited = make(map[interface{}]bool)
-	}
 	g.visited[src] = true
 	v := g.vertices[src]
 	pq := make(PriorityQueue, 0)

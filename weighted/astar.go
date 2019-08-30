@@ -12,13 +12,10 @@ func (g *Graph) AStar(start, dest interface{}) ([]interface{}, int) {
 	/*
 		Note: all vertex distances should be set to "infitity"
 		when vertices are initialized. see graph_test.go
-		for graph_test, we are hardcoding the heuristic val
+		for graph_test, we are hardcoding the heuristic val.
+		Make sure visited slice is cleared for subsequent runs.
 	*/
 	src := start
-	if len(g.visited) != 0 {
-		//clear map on subsequent runs for testing purposes
-		g.visited = make(map[interface{}]bool)
-	}
 	g.visited[src] = true
 	v := g.vertices[src]
 	pq := make(PriorityQueue, 0)
